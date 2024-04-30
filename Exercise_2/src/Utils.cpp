@@ -63,7 +63,8 @@ bool importCell0Ds(const string& path, PolygonalMesh& mesh, const bool verbose_l
         mesh.CoordinateCell0Ds.push_back(Vector2d (stod(coordinate_0), stod(coordinate_1)));
         mesh.IdCell0Ds.push_back(stoul(id));
         mesh.MarkerCell0Ds.push_back(stoul(marker));
-        mesh.VerticesMarker.insert({stoul(marker), {stoul(id)}});
+        // mesh.VerticesMarker.insert({stoul(marker), {stoul(id)}});
+        mesh.VerticesMarker[stoul(marker)].push_back(stoul(id));
     }
     if (verbose_log) {cout << endl;}
     file.close();
@@ -98,7 +99,8 @@ bool importCell1Ds(const string& path, PolygonalMesh& mesh, const bool verbose_l
         mesh.VerticesCell1Ds.push_back(array<unsigned, 2> {stoul(edge_1), stoul(edge_2)});
         mesh.IdCell1Ds.push_back(stoul(id));
         mesh.MarkerCell1Ds.push_back(stoul(marker));
-        mesh.EdgesMarker.insert({stoul(marker), {stoul(id)}});
+        // mesh.EdgesMarker.insert({stoul(marker), {stoul(id)}});
+        mesh.EdgesMarker[stoul(marker)].push_back(stoul(id));
     }
     if (verbose_log) {cout << endl;}
     file.close();
@@ -130,7 +132,8 @@ bool importCell2Ds(const string& path, PolygonalMesh& mesh, const bool verbose_l
         getline(s, marker, ';');
         mesh.IdCell2Ds.push_back(stoul(id));
         mesh.MarkerCell2Ds.push_back(stoul(marker));
-        mesh.CellsMarker.insert({stoul(marker), {stoul(id)}});
+        // mesh.CellsMarker.insert({stoul(marker), {stoul(id)}});
+        mesh.CellsMarker[stoul(marker)].push_back(stoul(id));
         if (verbose_log) {cout << "  " <<  id << " " << marker << " ";}
 
         string num_vertices;
@@ -168,11 +171,83 @@ void testMesh(PolygonalMesh& mesh, const bool verbose_log) {
     bool final_result = true;
     cout << "Controlling loaded mesh quality..." << endl;
     cout << endl;
+    final_result = check_vertex(mesh, verbose_log);
     final_result = check_edges(mesh, verbose_log);
     final_result = check_polygons(mesh, verbose_log);
     if (final_result) {cout << "All tests were passed" << endl;}
     else {cout << "There are some problems with the loaded mesh" << endl;}
     cout << endl;
+}
+
+bool check_vertex(PolygonalMesh& mesh, const bool verbose_log) {
+    bool result = true;
+    if (verbose_log) {cout << "Testing vertex:" << endl;}
+    for(const unsigned int id: mesh.VerticesMarker[1]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 0 && point_coord(1) == 0)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 1 but has the wrong x and y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 1 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[2]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 1 && point_coord(1) == 0)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 2 but has the wrong x and y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 2 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[3]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 1 && point_coord(1) == 1)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 3 but has the wrong x and y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 3 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[4]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 0 && point_coord(1) == 1)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 4 but has the wrong x and y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 4 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[5]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(1) == 0)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 5 but has the wrong y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 5 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[6]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 1)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 6 but has the wrong x" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 6 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[7]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(1) == 1)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 7 but has the wrong y" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 7 as it should be" << endl;}
+        }
+    }
+    for(const unsigned int id: mesh.VerticesMarker[8]) {
+        Vector2d point_coord = mesh.CoordinateCell0Ds[id];
+        if (!(point_coord(0) == 0)) {
+            cout << "  (#)Cell0D id: " << id << "is marked 8 but has the wrong x" << endl;
+        } else {
+            if (verbose_log) {cout << "  (-)Cell0D id: " << id << " is marked 8 as it should be" << endl;}
+        }
+    }
+    if (verbose_log) {cout << endl;}
+    return result;
 }
 
 bool check_edges(PolygonalMesh& mesh, const bool verbose_log) {
@@ -208,7 +283,7 @@ bool check_edges(PolygonalMesh& mesh, const bool verbose_log) {
             result = false;
         }
         else {
-            if (verbose_log) {cout << "  (-)Cell1D id: " << i << " is of the right type according to its points" << endl;}
+            if (verbose_log) {cout << "  (-)Cell1D id: " << i << " is of the right type (" << edge_marker << ") according to its points (" << vert_1_marker << "," << vert_2_marker << ")" << endl;}
         }
     }
     if (verbose_log) {cout << endl;}

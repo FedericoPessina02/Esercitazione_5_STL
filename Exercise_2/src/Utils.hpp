@@ -26,6 +26,8 @@ bool importCell2Ds(const string& path, PolygonalMesh& mesh, const bool verbose_l
 
 void testMesh(PolygonalMesh& mesh, const bool verbose_log);
 
+bool check_vertex(PolygonalMesh& mesh, const bool verbose_log);
+
 bool check_edges(PolygonalMesh& mesh, const bool verbose_log);
 
 bool check_polygons(PolygonalMesh& mesh, const bool verbose_log);
